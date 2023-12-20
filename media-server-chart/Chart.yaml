@@ -1,0 +1,6 @@
+apiVersion: v2
+name: media-server-chart
+description: A Helm chart to generate an entire media server all at once.
+
+type: application
+version: 0.1.0

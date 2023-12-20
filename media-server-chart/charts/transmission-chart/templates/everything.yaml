@@ -1,0 +1,9 @@
+{{ include "media-server-chart.deployment" . }}
+---
+{{ include "media-server-chart.service" . }}
+---
+{{ if .Values.ingress.enabled }}
+{{ include "media-server-chart.ingress" . }}
+{{ end }}
+---
+{{ include "media-server-chart.dynamic-pv-claims" . }}

@@ -1,0 +1,19 @@
+{{- define "media-server-chart.dynamic-pv-claims" }}
+
+{{- range $volume := .Values.dynamicVolumes }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $.Values.global.namespace }}-{{ $.Values.appName }}-claim-{{ $volume.name }}
+  namespace: {{ $.Values.global.namespace }}
+spec:
+  # storageClassName: standard
+  accessModes:
+    - {{ $volume.accessMode }}
+  resources:
+    requests:
+      storage: {{ $volume.storage }}
+---
+{{- end }}
+
+{{- end }}

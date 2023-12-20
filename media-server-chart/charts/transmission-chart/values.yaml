@@ -1,0 +1,37 @@
+appName: transmission
+imageLocation: lscr.io/linuxserver/transmission:latest
+containerPorts: 
+  - name: web-ui
+    port: 9091
+    targetPort: 9091
+    nodePort: 30909
+    protocol: TCP
+hostPorts:
+  - name: torrenting
+    port: 51413
+    protocol: TCP
+  - name: torrenting-udp
+    port: 51413
+    protocol: UDP
+ingress:
+  enabled: false
+  servicePort: 9091
+envVars:
+  TZ: America/Toronto
+  PUID: 1000
+  PGID: 1000
+existingVolumes:
+  - name: 'downloads'
+    claimName: 'download-volume-claim'
+existingVolumeClaims:
+  - name: 'downloads'
+    mountPath: '/downloads'
+    subPath: 'Media'
+  - name: 'downloads'
+    mountPath: '/watch'
+    subPath: 'watch'
+dynamicVolumes:
+  - name: 'config'
+    mountPath: '/config'
+    storage: 100Mi
+    accessMode: ReadWriteOnce

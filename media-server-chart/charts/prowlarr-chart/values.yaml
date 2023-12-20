@@ -1,0 +1,20 @@
+appName: prowlarr
+imageLocation: lscr.io/linuxserver/prowlarr:latest
+containerPorts: 
+  - name: web-ui
+    port: 9696
+    targetPort: 9696
+    nodePort: 30969
+    protocol: TCP
+ingress:
+  enabled: false
+  servicePort: 9696
+envVars:
+  TZ: America/Toronto
+  PUID: 1000
+  PGID: 1000
+dynamicVolumes:
+  - name: 'config'
+    mountPath: '/config'
+    storage: 100Mi
+    accessMode: ReadWriteOnce

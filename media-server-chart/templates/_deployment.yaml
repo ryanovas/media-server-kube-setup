@@ -1,0 +1,62 @@
+{{- define "media-server-chart.deployment" }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.global.namespace }}-{{ .Values.appName }}-deployment
+  namespace: {{ .Values.global.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.global.namespace }}-{{ .Values.appName }}-template
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.global.namespace }}-{{ .Values.appName }}-template
+    spec:
+      restartPolicy: Always
+
+      volumes:
+        {{- range $volume := .Values.existingVolumes }}
+        - name: {{ $.Values.appName }}-volume-{{ $volume.name }}
+          persistentVolumeClaim:
+            claimName: {{ $volume.claimName }}
+        {{- end }}
+        {{- range $volume := .Values.dynamicVolumes }}
+        - name: {{ $.Values.appName }}-volume-{{ $volume.name }}
+          persistentVolumeClaim:
+            claimName: {{ $.Values.global.namespace }}-{{ $.Values.appName }}-claim-{{ $volume.name }}
+        {{- end }}
+
+      containers:
+      - name: {{ .Values.global.namespace }}-{{ .Values.appName }}-container
+        image: {{ .Values.imageLocation }}
+        ports:          
+          {{- range $port := .Values.containerPorts }}
+          - name: {{ $port.name }}
+            containerPort: {{ $port.port }}
+            protocol: {{ $port.protocol }}
+          {{- end }}
+          {{- range $port := .Values.hostPorts }}
+          - name: {{ $port.name }}
+            containerPort: {{ $port.port }}
+            hostPort: {{ $port.port }}
+            protocol: {{ $port.protocol }}
+          {{- end }}
+        volumeMounts:
+          {{- range $volume := .Values.existingVolumeClaims }}
+          - mountPath: {{ $volume.mountPath | quote }}
+            subPath: {{ $volume.subPath | quote }}
+            name: {{ $.Values.appName }}-volume-{{ $volume.name }}
+          {{- end }}  
+          {{- range $volume := .Values.dynamicVolumes }}
+          - mountPath: {{ $volume.mountPath | quote }}
+            name: {{ $.Values.appName }}-volume-{{ $volume.name }}
+          {{- end }}          
+        env:
+          {{- range $key, $val := .Values.envVars }}
+          - name: {{ $key }}
+            value: {{ $val | quote }}
+          {{- end }}
+
+{{- end }}

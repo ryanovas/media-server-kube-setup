@@ -1,0 +1,21 @@
+{{- define "media-server-chart.service" }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.global.namespace }}-{{ .Values.appName }}-service
+  namespace: {{ .Values.global.namespace }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ .Values.global.namespace }}-{{ .Values.appName }}-template
+  ports:
+    {{- range $port := .Values.containerPorts }}
+    - name: {{ $port.name }}
+      port: {{ $port.port }}
+      targetPort: {{ $port.targetPort }}
+      protocol: {{ $port.protocol }}
+      nodePort: {{ $port.nodePort }}
+    {{- end }}    
+
+{{- end }}
