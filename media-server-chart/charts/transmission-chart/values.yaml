@@ -21,17 +21,15 @@ envVars:
   PUID: 1000
   PGID: 1000
 existingVolumes:
-  - name: 'downloads'
+  - name: 'media'
     claimName: 'download-volume-claim'
 existingVolumeClaims:
-  - name: 'downloads'
-    mountPath: '/downloads'
-    subPath: 'Media'
-  - name: 'downloads'
+  - name: 'media'
+    mountPath: '/media/torrents'
+    subPath: 'torrents'
+  - name: 'media'
     mountPath: '/watch'
     subPath: 'watch'
-dynamicVolumes:
-  - name: 'config'
+  - name: 'media'
     mountPath: '/config'
-    storage: 100Mi
-    accessMode: ReadWriteOnce
+    subPath: 'configs/transmission'

@@ -1,14 +1,14 @@
-appName: prowlarr
-imageLocation: lscr.io/linuxserver/prowlarr:latest
+appName: radarr
+imageLocation: lscr.io/linuxserver/radarr:latest
 containerPorts: 
   - name: web-ui
-    port: 9696
-    targetPort: 9696
-    nodePort: 30969
+    port: 7878
+    targetPort: 7878
+    nodePort: 30787
     protocol: TCP
 ingress:
   enabled: false
-  servicePort: 9696
+  servicePort: 7878
 envVars:
   TZ: America/Toronto
   PUID: 1000
@@ -18,5 +18,8 @@ existingVolumes:
     claimName: 'download-volume-claim'
 existingVolumeClaims:
   - name: 'media'
+    mountPath: '/media'
+    subPath: ''
+  - name: 'media'
     mountPath: '/config'
-    subPath: 'configs/prowlarr'
+    subPath: 'configs/radarr'

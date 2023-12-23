@@ -2,4 +2,4 @@ global:
   namespace: media-server
 
 downloadStorageAmount: 20Gi
-downloadLocation: /mnt/external-media
+downloadLocation: /mnt/external-media/media

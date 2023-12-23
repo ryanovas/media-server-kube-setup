@@ -1,0 +1,20 @@
+appName: jellyseerr
+imageLocation: fallenbagel/jellyseerr:latest
+containerPorts: 
+  - name: web-ui
+    port: 5055
+    targetPort: 5055
+    nodePort: 30505
+    protocol: TCP
+ingress:
+  enabled: false
+  servicePort: 5055
+envVars:
+  TZ: America/Toronto
+existingVolumes:
+  - name: 'media'
+    claimName: 'download-volume-claim'
+existingVolumeClaims:
+  - name: 'media'
+    mountPath: '/app/config'
+    subPath: 'configs/jellyseerr'

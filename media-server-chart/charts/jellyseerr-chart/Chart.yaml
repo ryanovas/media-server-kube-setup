@@ -1,0 +1,6 @@
+apiVersion: v2
+name: jellyseerr-chart
+description: A Helm chart for Jellyseerr, a webapp to manage content from all the *arr apps and sync with Jellyfin
+
+type: application
+version: 0.1.0

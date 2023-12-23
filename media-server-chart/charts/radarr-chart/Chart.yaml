@@ -1,0 +1,6 @@
+apiVersion: v2
+name: radarr-chart
+description: A Helm chart for Radarr, a movie torrent search webapp
+
+type: application
+version: 0.1.0

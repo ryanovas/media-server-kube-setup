@@ -1,0 +1,6 @@
+apiVersion: v2
+name: bazarr-chart
+description: A Helm chart for Bazarr, a subtitle manager for Radarr and Sonarr
+
+type: application
+version: 0.1.0

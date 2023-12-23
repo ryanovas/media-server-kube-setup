@@ -1,0 +1,26 @@
+appName: lazylibrarian
+imageLocation: lscr.io/linuxserver/lazylibrarian:latest
+containerPorts: 
+  - name: web-ui
+    port: 5299
+    targetPort: 5299
+    nodePort: 30529
+    protocol: TCP
+ingress:
+  enabled: false
+  servicePort: 5299
+envVars:
+  TZ: America/Toronto
+  PUID: 1000
+  PGID: 1000
+  DOCKER_MODS: linuxserver/mods:universal-calibre|linuxserver/mods:lazylibrarian-ffmpeg
+existingVolumes:
+  - name: 'media'
+    claimName: 'download-volume-claim'
+existingVolumeClaims:
+  - name: 'media'
+    mountPath: '/media'
+    subPath: ''
+  - name: 'media'
+    mountPath: '/config'
+    subPath: 'configs/lazylibrarian'

@@ -1,0 +1,28 @@
+appName: bazarr
+imageLocation: lscr.io/linuxserver/bazarr:latest
+containerPorts: 
+  - name: web-ui
+    port: 6767
+    targetPort: 6767
+    nodePort: 30676
+    protocol: TCP
+ingress:
+  enabled: false
+  servicePort: 6767
+envVars:
+  TZ: America/Toronto
+  PUID: 1000
+  PGID: 1000
+existingVolumes:
+  - name: 'media'
+    claimName: 'download-volume-claim'
+existingVolumeClaims:
+  - name: 'media'
+    mountPath: '/movies'
+    subPath: 'library/movies'
+  - name: 'media'
+    mountPath: '/tv'
+    subPath: 'library/tv'
+  - name: 'media'
+    mountPath: '/config'
+    subPath: 'configs/bazarr'

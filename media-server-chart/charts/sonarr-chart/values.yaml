@@ -1,14 +1,14 @@
-appName: prowlarr
-imageLocation: lscr.io/linuxserver/prowlarr:latest
+appName: sonarr
+imageLocation: lscr.io/linuxserver/sonarr:latest
 containerPorts: 
   - name: web-ui
-    port: 9696
-    targetPort: 9696
-    nodePort: 30969
+    port: 8989
+    targetPort: 8989
+    nodePort: 30898
     protocol: TCP
 ingress:
   enabled: false
-  servicePort: 9696
+  servicePort: 8989
 envVars:
   TZ: America/Toronto
   PUID: 1000
@@ -18,5 +18,8 @@ existingVolumes:
     claimName: 'download-volume-claim'
 existingVolumeClaims:
   - name: 'media'
+    mountPath: '/media'
+    subPath: ''
+  - name: 'media'
     mountPath: '/config'
-    subPath: 'configs/prowlarr'
+    subPath: 'configs/sonarr'

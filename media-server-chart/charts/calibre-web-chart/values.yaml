@@ -1,0 +1,27 @@
+appName: calibre-web
+imageLocation: lscr.io/linuxserver/calibre-web:latest
+containerPorts: 
+  - name: web-ui
+    port: 8083
+    targetPort: 8083
+    nodePort: 30883
+    protocol: TCP
+ingress:
+  enabled: false
+  servicePort: 8083
+envVars:
+  TZ: America/Toronto
+  PUID: 1000
+  PGID: 1000
+  DOCKER_MODS: linuxserver/mods:universal-calibre
+  OAUTHLIB_RELAX_TOKEN_SCOPE: 1
+existingVolumes:
+  - name: 'media'
+    claimName: 'download-volume-claim'
+existingVolumeClaims:
+  - name: 'media'
+    mountPath: '/books'
+    subPath: 'library/calibre'
+  - name: 'media'
+    mountPath: '/config'
+    subPath: 'configs/calibre-web'

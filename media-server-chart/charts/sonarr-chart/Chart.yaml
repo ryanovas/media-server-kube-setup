@@ -1,0 +1,6 @@
+apiVersion: v2
+name: sonarr-chart
+description: A Helm chart for Sonarr, a TV show torrent search webapp
+
+type: application
+version: 0.1.0

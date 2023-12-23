@@ -1,0 +1,6 @@
+apiVersion: v2
+name: calibre-web-chart
+description: A Helm chart for Calibe Web, a webapp frontend for Calibre
+
+type: application
+version: 0.1.0
