@@ -7,8 +7,11 @@ containerPorts:
     nodePort: 30969
     protocol: TCP
 ingress:
-  enabled: false
+  enabled: true
   servicePort: 9696
+gluetun:
+  enabled: false
+  volumeName: media
 envVars:
   TZ: America/Toronto
   PUID: 1000

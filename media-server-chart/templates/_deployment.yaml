@@ -4,7 +4,13 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.global.namespace }}-{{ .Values.appName }}-deployment
-  namespace: {{ .Values.global.namespace }}
+  namespace: {{ .Values.global.namespace }}  
+  labels:
+    {{ if .Values.gluetun.enabled }}
+    network-mode: gluetun
+    {{ else }}
+    network-mode: native
+    {{ end }}
 spec:
   selector:
     matchLabels:
@@ -29,34 +35,115 @@ spec:
         {{- end }}
 
       containers:
-      - name: {{ .Values.global.namespace }}-{{ .Values.appName }}-container
-        image: {{ .Values.imageLocation }}
-        ports:          
-          {{- range $port := .Values.containerPorts }}
-          - name: {{ $port.name }}
-            containerPort: {{ $port.port }}
-            protocol: {{ $port.protocol }}
-          {{- end }}
-          {{- range $port := .Values.hostPorts }}
-          - name: {{ $port.name }}
-            containerPort: {{ $port.port }}
-            hostPort: {{ $port.port }}
-            protocol: {{ $port.protocol }}
-          {{- end }}
-        volumeMounts:
-          {{- range $volume := .Values.existingVolumeClaims }}
-          - mountPath: {{ $volume.mountPath | quote }}
-            subPath: {{ $volume.subPath | quote }}
-            name: {{ $.Values.appName }}-volume-{{ $volume.name }}
-          {{- end }}  
-          {{- range $volume := .Values.dynamicVolumes }}
-          - mountPath: {{ $volume.mountPath | quote }}
-            name: {{ $.Values.appName }}-volume-{{ $volume.name }}
-          {{- end }}          
-        env:
-          {{- range $key, $val := .Values.envVars }}
-          - name: {{ $key }}
-            value: {{ $val | quote }}
-          {{- end }}
+        {{ if .Values.gluetun.enabled }}
+
+        - name: {{ .Values.global.namespace }}-{{ .Values.appName }}-gluetun
+          image: qmcgaw/gluetun
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add: ["NET_ADMIN"]
+          
+          ports:
+            {{- range $port := .Values.containerPorts }}
+            - name: {{ $port.name }}
+              containerPort: {{ $port.port }}
+              {{ if $port.protocol }}
+              protocol: {{ $port.protocol }}
+              {{ end }}
+            {{- end }}
+            {{- range $port := .Values.hostPorts }}
+            - name: {{ $port.name }}
+              containerPort: {{ $port.port }}
+              hostPort: {{ $port.port }}
+              {{ if $port.protocol }}
+              protocol: {{ $port.protocol }}
+              {{ end }}
+            {{- end }}
+
+          env:
+            # - name: DNS_KEEP_NAMESERVER
+            #   value: 'on'
+
+            - name: SHADOWSOCKS
+              value: 'off'
+
+            - name: HTTPPROXY
+              value: 'off'
+
+            - name: TZ
+              value: 'America/Toronto'
+
+            - name: VPN_SERVICE_PROVIDER
+              value: 'custom'
+
+            - name: VPN_TYPE
+              value: 'openvpn'
+
+            - name: VPN_ENDPOINT_IP
+              value: '199.189.26.131'
+            
+            - name: VPN_ENDPOINT_PORT
+              value: '443'
+
+            - name: OPENVPN_USER
+              value: '3zk25t6q-8x6aknz'
+
+            - name: OPENVPN_PASSWORD
+              value: 'x6fuwh92bk'
+
+            - name: OPENVPN_CUSTOM_CONFIG
+              value: '/gluetun/Windscribe-StaticIP.ovpn'
+
+            - name: FIREWALL_INPUT_PORTS
+              value: {{ include "gluetunPorts" . | trimSuffix "," | quote }}
+
+            - name: HEALTH_VPN_DURATION_INITIAL
+              value: '30s'
+
+          volumeMounts:
+            - name: {{ $.Values.appName }}-volume-{{ $.Values.gluetun.volumeName }}
+              mountPath: /gluetun
+              subPath: 'configs/gluetun'
+
+        {{ end }}
+        
+        - name: {{ .Values.global.namespace }}-{{ .Values.appName }}-container
+          image: {{ .Values.imageLocation }}
+
+          {{ if not .Values.gluetun.enabled }}
+          ports:          
+            {{- range $port := .Values.containerPorts }}
+            - name: {{ $port.name }}
+              containerPort: {{ $port.port }}
+              {{ if $port.protocol }}
+              protocol: {{ $port.protocol }}
+              {{ end }}
+            {{- end }}
+            {{- range $port := .Values.hostPorts }}
+            - name: {{ $port.name }}
+              containerPort: {{ $port.port }}
+              hostPort: {{ $port.port }}
+              {{ if $port.protocol }}
+              protocol: {{ $port.protocol }}
+              {{ end }}
+            {{- end }}
+          {{ end }}
+
+          volumeMounts:
+            {{- range $volume := .Values.existingVolumeClaims }}
+            - mountPath: {{ $volume.mountPath | quote }}
+              subPath: {{ $volume.subPath | quote }}
+              name: {{ $.Values.appName }}-volume-{{ $volume.name }}
+            {{- end }}  
+            {{- range $volume := .Values.dynamicVolumes }}
+            - mountPath: {{ $volume.mountPath | quote }}
+              name: {{ $.Values.appName }}-volume-{{ $volume.name }}
+            {{- end }}          
+          env:
+            {{- range $key, $val := .Values.envVars }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end }}
 
 {{- end }}

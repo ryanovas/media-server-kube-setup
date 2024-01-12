@@ -6,15 +6,16 @@ metadata:
   name: {{ .Values.global.namespace }}-{{ .Values.appName }}-ingress
   namespace: {{ .Values.global.namespace }}
 spec:
-  rules:
-  - http:
-      paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: {{ .Values.global.namespace }}-{{ .Values.appName }}-service
-              port:
-                number: {{ .Values.ingress.servicePort }}
+  defaultBackend:
+    service:
+      name: {{ .Values.global.namespace }}-{{ .Values.appName }}-service
+      port:
+        name: https
+  ingressClassName: tailscale
+  
+  # this sets the hostname for the ingress in tailnet
+  tls:
+  - hosts:
+    - {{ .Values.appName }}
 
 {{- end }}

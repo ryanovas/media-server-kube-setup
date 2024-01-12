@@ -1,25 +1,31 @@
-appName: transmission
-imageLocation: lscr.io/linuxserver/transmission:latest
+appName: qbittorrent
+imageLocation: lscr.io/linuxserver/qbittorrent:latest
 containerPorts: 
   - name: web-ui
-    port: 9091
-    targetPort: 9091
-    nodePort: 30909
+    port: 30900
+    targetPort: 30900
+    nodePort: 30900
     protocol: TCP
-hostPorts:
   - name: torrenting
-    port: 51413
-    protocol: TCP
+    port: 30681
+    targetPort: 30681
+    nodePort: 30681
   - name: torrenting-udp
-    port: 51413
+    port: 30681
+    targetPort: 30681
+    nodePort: 30681
     protocol: UDP
 ingress:
-  enabled: false
-  servicePort: 9091
+  enabled: true
+  servicePort: 30900
+gluetun:
+  enabled: true
+  volumeName: media
 envVars:
   TZ: America/Toronto
   PUID: 1000
   PGID: 1000
+  WEBUI_PORT: 30900
 existingVolumes:
   - name: 'media'
     claimName: 'download-volume-claim'
@@ -28,8 +34,5 @@ existingVolumeClaims:
     mountPath: '/media/torrents'
     subPath: 'torrents'
   - name: 'media'
-    mountPath: '/watch'
-    subPath: 'watch'
-  - name: 'media'
     mountPath: '/config'
-    subPath: 'configs/transmission'
+    subPath: 'configs/qbittorrent'

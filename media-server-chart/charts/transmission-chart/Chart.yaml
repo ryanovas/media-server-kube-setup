@@ -1,6 +1,0 @@
-apiVersion: v2
-name: transmission-chart
-description: A Helm chart for transmission torrent client
-
-type: application
-version: 0.1.0

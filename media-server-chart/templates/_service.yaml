@@ -14,7 +14,9 @@ spec:
     - name: {{ $port.name }}
       port: {{ $port.port }}
       targetPort: {{ $port.targetPort }}
+      {{ if $port.protocol }}
       protocol: {{ $port.protocol }}
+      {{ end }}
       nodePort: {{ $port.nodePort }}
     {{- end }}    
 
