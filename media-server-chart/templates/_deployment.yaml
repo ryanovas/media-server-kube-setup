@@ -62,6 +62,8 @@ spec:
             {{- end }}
 
           env:
+            # If you can figure out how to keep this on and not lose connectivity
+            # please make a PR. Without it there is no service name->IP resolution.
             # - name: DNS_KEEP_NAMESERVER
             #   value: 'on'
 
@@ -72,7 +74,7 @@ spec:
               value: 'off'
 
             - name: TZ
-              value: 'America/Toronto'
+              value: {{ .Values.global.gluetun.TZ | quote }}
 
             - name: VPN_SERVICE_PROVIDER
               value: 'custom'
@@ -81,19 +83,28 @@ spec:
               value: 'openvpn'
 
             - name: VPN_ENDPOINT_IP
-              value: '199.189.26.131'
+              value: {{ .Values.global.gluetun.endpointIp | quote }}
             
             - name: VPN_ENDPOINT_PORT
-              value: '443'
+              value: {{ .Values.global.gluetun.endpointPort | quote }}
 
             - name: OPENVPN_USER
-              value: '3zk25t6q-8x6aknz'
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.gluetun.openVpnUserSecretName | quote }}
+                  key: {{ .Values.global.gluetun.openVpnUserSecretKey | quote }}
 
             - name: OPENVPN_PASSWORD
-              value: 'x6fuwh92bk'
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.gluetun.openVpnPassSecretName | quote }}
+                  key: {{ .Values.global.gluetun.openVpnPassSecretKey | quote }}
 
             - name: OPENVPN_CUSTOM_CONFIG
-              value: '/gluetun/Windscribe-StaticIP.ovpn'
+              value: {{ .Values.global.gluetun.ovpnFile | quote }}
+            
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              value: '10.152.183.0/24' # swap to match your setup
 
             - name: FIREWALL_INPUT_PORTS
               value: {{ include "gluetunPorts" . | trimSuffix "," | quote }}
@@ -102,7 +113,7 @@ spec:
               value: '30s'
 
           volumeMounts:
-            - name: {{ $.Values.appName }}-volume-{{ $.Values.gluetun.volumeName }}
+            - name: {{ $.Values.appName }}-volume-{{ $.Values.global.gluetun.volumeName }}
               mountPath: /gluetun
               subPath: 'configs/gluetun'
 

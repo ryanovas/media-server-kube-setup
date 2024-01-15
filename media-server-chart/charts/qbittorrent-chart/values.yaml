@@ -10,17 +10,12 @@ containerPorts:
     port: 30681
     targetPort: 30681
     nodePort: 30681
-  - name: torrenting-udp
-    port: 30681
-    targetPort: 30681
-    nodePort: 30681
-    protocol: UDP
+    protocol: TCP
 ingress:
-  enabled: true
+  enabled: false
   servicePort: 30900
 gluetun:
   enabled: true
-  volumeName: media
 envVars:
   TZ: America/Toronto
   PUID: 1000

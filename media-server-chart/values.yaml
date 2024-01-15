@@ -1,5 +1,15 @@
 global:
   namespace: media-server
+  gluetun:
+    volumeName: media
+    TZ: America/Toronto
+    endpointIp: 199.189.26.131
+    endpointPort: 443
+    openVpnUserSecretName: openvpnuser
+    openVpnUserSecretKey: username
+    openVpnPassSecretName: openvpnpass
+    openVpnPassSecretKey: passwd
+    ovpnFile: /gluetun/Windscribe-StaticIP.ovpn
 
 downloadStorageAmount: 20Gi
 downloadLocation: /mnt/external-media/media
